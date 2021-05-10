@@ -3,6 +3,7 @@ package pl.priv.leliwa.angularGenerator.tableWithDialog;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.json.JSONObject;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -22,7 +23,6 @@ public abstract class AbstractGenerator {
 	}
 
 	private void putTemplateVariables(VelocityContext context) {
-		String s = "xxx";
 		context.put( "item", "Dictionary");
 		context.put( "Item", "Dictionary");
 		context.put( "component", "dictionaries");
