@@ -1,0 +1,62 @@
+import { HttpClient } from '@angular/common/http';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTable } from '@angular/material/table';
+import { ${Component}DialogComponent } from './${component}-dialog.component';
+import { ${Component}DataSource, ${item}Item } from './${component}-datasource';
+
+@Component({
+  selector: 'app-${component}',
+  templateUrl: './${component}.component.html',
+  styleUrls: ['./${component}.component.css']
+})
+export class ${Component}Component implements AfterViewInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatTable) table!: MatTable<${item}Item>;
+  dataSource: ${Component}DataSource;
+
+  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
+  displayedColumns = [
+#foreach($field in $fields.keySet()) 
+    '${field}', 
+#end
+    'actions'
+  ];
+
+  constructor(private http: HttpClient, public dialog: MatDialog) {
+    this.dataSource = new ${Component}DataSource(http);
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.table.dataSource = this.dataSource;
+  }
+  
+  openDialog(action: string, obj) {
+    obj.action = action;
+    const dialogRef = this.dialog.open(${Component}DialogComponent, {
+      data:obj
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result.event == 'Add'){
+        this.dataSource.addRowData(result.data);
+      }else if(result.event == 'Update'){
+        this.updateRowData(result.data);
+      }else if(result.event == 'Delete'){
+        this.deleteRowData(result.data);
+      }
+    });
+  }
+
+  updateRowData(row_obj){
+    this.dataSource.updateRowData(row_obj);
+  }
+  deleteRowData(row_obj){
+    this.dataSource.deleteRowData(row_obj);
+  }
+}

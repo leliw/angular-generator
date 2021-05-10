@@ -1,0 +1,35 @@
+<div class="mat-elevation-z8">
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+#foreach($field in $fields.keySet())    
+    <ng-container matColumnDef="${field}">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>${field}</th>
+      <td mat-cell *matCellDef="let row">{{row.${field}}}</td>
+    </ng-container>
+#end
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions
+        <button mat-icon-button matTooltip="Click to Edit" class="iconbutton" color="primary" (click)="openDialog('Add', {})">
+          <mat-icon aria-label="Add">add</mat-icon>
+        </button>      
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button matTooltip="Click to Edit" class="iconbutton" color="primary" (click)="openDialog('Update', row)">
+          <mat-icon aria-label="Edit">edit</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Click to Delete" class="iconbutton" color="warn" (click)="openDialog('Delete', row)">
+          <mat-icon aria-label="Delete">delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data?.length"
+      [pageIndex]="0"
+      [pageSize]="15"
+      [pageSizeOptions]="[5, 10, 15, 20]">
+  </mat-paginator>
+</div>
