@@ -6,13 +6,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.velocity.VelocityContext;
+import org.json.JSONObject;
 
 public class Generator extends AbstractGenerator {
 
 	private String templatePath = "/templates/tableWithDialog";
 	private String templateName;
+	private String jsonFileName;
 
 	public void generateAll(String template, String outputPath, String componentName) throws Exception {
 		this.templatePath = "/templates/" + template;
@@ -29,6 +35,11 @@ public class Generator extends AbstractGenerator {
 				System.out.println("ok.");
 			}
 		}
+	}
+	
+	public void generateAll(String template, String inputJson, String outputPath, String componentName) throws Exception {
+		this.jsonFileName = inputJson;
+		this.generateAll(template, outputPath, componentName);
 	}
 	
 	public StringWriter generate(String templateName) throws Exception {
@@ -65,5 +76,30 @@ public class Generator extends AbstractGenerator {
 	
 	private ClassLoader getContextClassLoader() {
 	    return Thread.currentThread().getContextClassLoader();
+	}
+
+	
+	protected void putTemplateVariables(VelocityContext context) throws Exception {
+		
+		String jsonString = Files.readString(Paths.get(this.jsonFileName));
+	    JSONObject jsonObj = new JSONObject(jsonString);
+	    for(String key : jsonObj.keySet())
+	    {
+	      context.put(key, jsonObj.get(key));
+	    }
+		
+//		context.put( "item", "Dictionary");
+//		context.put( "Item", "Dictionary");
+//		context.put( "component", "dictionaries");
+//		context.put( "Component", "Dictionaries");
+//		context.put( "apiPath", "/dictionaries");
+//		Map<String, String> fields = new LinkedHashMap<String, String>();
+//		fields.put("id", "number");
+//		fields.put("type", "string");
+//		fields.put("symbol", "string");
+//		fields.put("name", "string");
+//		fields.put("description", "string");
+//		context.put("fields", fields);
+//		context.put("id", "id");
 	}
 }

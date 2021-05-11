@@ -21,6 +21,6 @@ public class App
         Velocity.init(p);
         
         Generator gen = new Generator();
-        gen.generateAll("tableWithDialog", "c:/temp", "Suffix");
+        gen.generateAll("tableWithDialog", "c:/temp/input.json", "c:/temp", "Suffix");
     }
 }
