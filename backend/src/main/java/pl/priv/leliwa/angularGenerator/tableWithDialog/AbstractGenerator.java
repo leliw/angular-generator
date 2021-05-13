@@ -1,6 +1,13 @@
 package pl.priv.leliwa.angularGenerator.tableWithDialog;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -8,9 +15,33 @@ import org.apache.velocity.app.Velocity;
 
 public abstract class AbstractGenerator {
 
-	protected abstract String getTemplateName();
+	private String templatePath;
+	private String templateName;
+	
 	protected abstract void putTemplateVariables(VelocityContext context) throws Exception;
 
+	public void generateAll(String template, String outputPath, String componentName) throws Exception {
+		this.templatePath = "/templates/" + template;
+		List<String> templates = getResourceFiles(this.templatePath);
+		for (String t : templates) {
+			if (t.endsWith(".vm")) {
+				String outputFileName = outputPath + "/" + componentName + (t.startsWith("-") ? "" :  ".") + t.substring(0, t.length() - 3); 
+				System.out.print("Generating " + outputFileName + " ... ");
+				
+				StringWriter sw = this.generate(t);
+		        FileWriter fw = new FileWriter(outputFileName);
+		        fw.write(sw.toString());
+		        fw.close();
+				System.out.println("ok.");
+			}
+		}
+	}
+	
+	public StringWriter generate(String templateName) throws Exception {
+		this.templateName = templateName;
+		return this.generate();
+	}
+	
 	public StringWriter generate() throws Exception {
         VelocityContext context = new VelocityContext();
         this.putTemplateVariables(context);
@@ -20,4 +51,34 @@ public abstract class AbstractGenerator {
         return sw;
 	}
 
+	protected String getTemplateName() {
+		return String.format("%s/%s", templatePath, templateName);
+	}
+	
+	protected List<String> getResourceFiles(String path) throws IOException {
+	    List<String> filenames = new ArrayList<>();
+
+	    try (
+	            InputStream in = getResourceAsStream(path);
+	            BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+	        String resource;
+
+	        while ((resource = br.readLine()) != null) {
+	            filenames.add(resource);
+	        }
+	    }
+
+	    return filenames;
+	}
+	
+	private InputStream getResourceAsStream(String resource) {
+	    final InputStream in
+	            = getContextClassLoader().getResourceAsStream(resource);
+
+	    return in == null ? getClass().getResourceAsStream(resource) : in;
+	}
+	
+	private ClassLoader getContextClassLoader() {
+	    return Thread.currentThread().getContextClassLoader();
+	}
 }
