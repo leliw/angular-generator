@@ -1,0 +1,9 @@
+package ${package}.${item};
+
+@SuppressWarnings("serial")
+public class ${Item}NotFoundException extends Exception {
+
+	public ${Item}NotFoundException(${IdClass} id) {
+		super("Could not find ${item} " + id);
+	}
+}

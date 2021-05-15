@@ -1,0 +1,55 @@
+package ${package}.${item};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ${Item}Controller {
+	@Autowired
+	private ${Item}Repository repository;
+	
+	@GetMapping("${apiPath}")
+	public @ResponseBody Iterable<${Item}> getAll() {
+		 return this.repository.findAll();
+	}
+	
+	@GetMapping("${apiPath}/{id}")
+	public ${Item} one(@PathVariable ${IdClass} id) throws Exception {
+		return this.repository.findById(id)
+				.orElseThrow(() -> new ${Item}NotFoundException(id));
+	}
+
+	@PostMapping("${apiPath}")
+	public ${Item} newOne(@RequestBody ${Item} item) {
+		return this.repository.save(item);
+	}
+	
+	@PutMapping("${apiPath}/{id}")
+	public ${Item} replace(@RequestBody ${Item} newItem, @PathVariable ${IdClass} id)
+			throws Exception {
+		return repository.findById(id).map(item -> {
+#foreach($field in $javaFields.keySet())
+#if($field != $id)
+			item.${field} = newItem.${field};
+#end
+#end		
+			return repository.save(newItem);
+		}).orElseGet(() -> {
+			newItem.id = id;
+			return repository.save(newItem);
+		});
+	}
+	
+	@DeleteMapping("${apiPath}/{id}")
+	public void delete(@PathVariable ${IdClass} id) {
+		repository.deleteById(id);
+	}
+
+}

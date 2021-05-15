@@ -20,6 +20,7 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import pl.priv.leliwa.angularGenerator.tableWithDialog.AngularGenerator;
 import pl.priv.leliwa.angularGenerator.tableWithDialog.Generator;
 
 /**
@@ -31,7 +32,7 @@ public class TableWithDetailTest {
 
 	@BeforeClass
 	public static void BeforeClass() {
-		generator = new Generator();
+		generator = new AngularGenerator();
 		generator.setTemplatePath("/templates/tableWithDetail");
 	}
 

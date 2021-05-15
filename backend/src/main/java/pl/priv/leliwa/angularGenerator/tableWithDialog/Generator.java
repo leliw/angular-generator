@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -13,14 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Generator extends AbstractGenerator {
 
-	private String jsonFileName;
-	private Map<String, Object> jsonMap;
+	protected String jsonFileName;
+	protected Map<String, Object> jsonMap;
 
-	public void generateAll(String template, String inputJson, String outputPath)
-			throws Exception {
+	public void generateAllFromJson(String template, String inputJson, String outputPath) throws Exception {
 		this.setJsonFileName(inputJson);
-		String componentName = (String) this.jsonMap.get("Component");
-		this.generateAll(template, outputPath, componentName);
+		this.generateAll(template, outputPath);
 	}
 
 	protected void putTemplateVariables(VelocityContext context) throws Exception {
@@ -28,7 +27,7 @@ public class Generator extends AbstractGenerator {
 			context.put(e.getKey(), e.getValue());
 		}
 	}
-
+	
 	public String getJsonFileName() {
 		return jsonFileName;
 	}
@@ -41,6 +40,15 @@ public class Generator extends AbstractGenerator {
 		String jsonString = Files.readString(path);
 		ObjectMapper mapper = new ObjectMapper();
 		jsonMap = mapper.readValue(jsonString, Map.class);
+		this.addDefaultValues();
+	}
+
+	protected void addDefaultValues() {
+		if (jsonMap.containsKey("Item") && !jsonMap.containsKey("item")) {
+			String s = (String) jsonMap.get("Item");
+			s = s.substring(0,1).toLowerCase() + s.substring(1);
+			jsonMap.put("item", s);
+		}
 	}
 
 }

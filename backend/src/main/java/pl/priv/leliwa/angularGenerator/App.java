@@ -1,16 +1,15 @@
 package pl.priv.leliwa.angularGenerator;
 
 import pl.priv.leliwa.angularGenerator.tableWithDialog.Generator;
+import pl.priv.leliwa.angularGenerator.tableWithDialog.SpringGenerator;
 
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
     public static void main( String[] args ) throws Exception
     {
-        Generator gen = new Generator();
-        gen.generateAll("tableWithDialog", "c:/temp/input.json", "c:/temp");
+        SpringGenerator gen = new SpringGenerator();
+//        gen.generateAllFromJson("tableWithDialog", "c:/temp/input.json", "c:/temp");
+        gen.generateAllFromJson("spring/crudRepositoryRestController", "c:/temp/spring_product.json", "c:/temp");
     }
 }
