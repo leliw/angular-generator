@@ -20,8 +20,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import pl.priv.leliwa.angularGenerator.tableWithDialog.AngularGenerator;
-import pl.priv.leliwa.angularGenerator.tableWithDialog.Generator;
+import pl.priv.leliwa.angularGenerator.generator.AngularGenerator;
+import pl.priv.leliwa.angularGenerator.generator.Generator;
 
 /**
  * @author Marcin Leliwa

@@ -1,7 +1,6 @@
 package pl.priv.leliwa.angularGenerator;
 
-import pl.priv.leliwa.angularGenerator.tableWithDialog.Generator;
-import pl.priv.leliwa.angularGenerator.tableWithDialog.SpringGenerator;
+import pl.priv.leliwa.angularGenerator.generator.SpringGenerator;
 
 
 public class App 

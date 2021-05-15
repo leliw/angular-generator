@@ -1,4 +1,4 @@
-package pl.priv.leliwa.angularGenerator.tableWithDialog;
+package pl.priv.leliwa.angularGenerator.generator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

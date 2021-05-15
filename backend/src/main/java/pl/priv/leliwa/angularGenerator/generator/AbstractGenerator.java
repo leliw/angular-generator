@@ -1,4 +1,4 @@
-package pl.priv.leliwa.angularGenerator.tableWithDialog;
+package pl.priv.leliwa.angularGenerator.generator;
 
 import java.io.FileWriter;
 import java.io.StringWriter;

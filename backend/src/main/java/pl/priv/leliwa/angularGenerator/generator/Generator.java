@@ -1,10 +1,9 @@
-package pl.priv.leliwa.angularGenerator.tableWithDialog;
+package pl.priv.leliwa.angularGenerator.generator;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 

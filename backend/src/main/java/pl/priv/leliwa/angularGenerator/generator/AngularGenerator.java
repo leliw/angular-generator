@@ -1,4 +1,4 @@
-package pl.priv.leliwa.angularGenerator.tableWithDialog;
+package pl.priv.leliwa.angularGenerator.generator;
 
 public class AngularGenerator extends Generator {
 
