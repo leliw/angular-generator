@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -20,9 +21,17 @@ public abstract class AbstractGenerator {
 	
 	protected abstract void putTemplateVariables(VelocityContext context) throws Exception;
 
+	public AbstractGenerator() {
+        Properties p = new Properties();
+        p.setProperty("resource.loader", "class");
+        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");        
+//        p.setProperty("resource.loader.file.path", "templates");
+        Velocity.init(p);
+	}
+	
 	public void generateAll(String template, String outputPath, String componentName) throws Exception {
-		this.templatePath = "/templates/" + template;
-		List<String> templates = getResourceFiles(this.templatePath);
+		this.setTemplatePath("/templates/" + template);
+		List<String> templates = getResourceFiles(this.getTemplatePath());
 		for (String t : templates) {
 			if (t.endsWith(".vm")) {
 				String outputFileName = outputPath + "/" + componentName + (t.startsWith("-") ? "" :  ".") + t.substring(0, t.length() - 3); 
@@ -52,8 +61,8 @@ public abstract class AbstractGenerator {
 	}
 
 	protected String getTemplateName() {
-		if (templatePath != null)
-			return String.format("%s/%s", templatePath, templateName);
+		if (getTemplatePath() != null)
+			return String.format("%s/%s", getTemplatePath(), templateName);
 		else
 			return templateName;
 	}
@@ -83,5 +92,13 @@ public abstract class AbstractGenerator {
 	
 	private ClassLoader getContextClassLoader() {
 	    return Thread.currentThread().getContextClassLoader();
+	}
+
+	public String getTemplatePath() {
+		return templatePath;
+	}
+
+	public void setTemplatePath(String templatePath) {
+		this.templatePath = templatePath;
 	}
 }

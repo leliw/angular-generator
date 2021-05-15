@@ -16,16 +16,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.velocity.app.Velocity;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pl.priv.leliwa.angularGenerator.tableWithDialog.Generator;
 
 /**
- * @author marcin
+ * @author Marcin Leliwa
  *
  */
 public class TableWithDetailTest {
@@ -33,12 +31,8 @@ public class TableWithDetailTest {
 
 	@BeforeClass
 	public static void BeforeClass() {
-        Properties p = new Properties();
-        p.setProperty("resource.loader", "class");
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");        
-//        p.setProperty("resource.loader.file.path", "templates");
-        Velocity.init(p);
 		generator = new Generator();
+		generator.setTemplatePath("/templates/tableWithDetail");
 	}
 
 	@Test
@@ -49,7 +43,7 @@ public class TableWithDetailTest {
 //		}
 		
 		generator.setJsonFileName(getResourceFileName("/tableWithDetail/product.json"));
-		StringWriter sw = generator.generate("/tableWithDetail/-datasource.ts.vm");
+		StringWriter sw = generator.generate("-datasource.ts.vm");
 		this.assertFileContent("/tableWithDetail/product-datasource.ts", sw);
 	}
 	

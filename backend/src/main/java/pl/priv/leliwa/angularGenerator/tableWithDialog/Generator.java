@@ -1,5 +1,6 @@
 package pl.priv.leliwa.angularGenerator.tableWithDialog;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,21 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class Generator extends AbstractGenerator {
 
 	private String jsonFileName;
+	private Map<String, Object> jsonMap;
 
-	public void generateAll(String template, String inputJson, String outputPath, String componentName)
+	public void generateAll(String template, String inputJson, String outputPath)
 			throws Exception {
-		this.jsonFileName = inputJson;
+		this.setJsonFileName(inputJson);
+		String componentName = (String) this.jsonMap.get("Component");
 		this.generateAll(template, outputPath, componentName);
 	}
 
 	protected void putTemplateVariables(VelocityContext context) throws Exception {
-		Path path = Paths.get(this.jsonFileName);
-		String jsonString = Files.readString(path);
-
-		ObjectMapper mapper = new ObjectMapper();
-		@SuppressWarnings("unchecked")
-		Map<String, ?> json = mapper.readValue(jsonString, Map.class);
-		for (Entry<String, ?> e : json.entrySet()) {
+		for (Entry<String, Object> e : jsonMap.entrySet()) {
 			context.put(e.getKey(), e.getValue());
 		}
 	}
@@ -36,8 +33,14 @@ public class Generator extends AbstractGenerator {
 		return jsonFileName;
 	}
 
-	public void setJsonFileName(String jsonFileName) {
+	@SuppressWarnings("unchecked")
+	public void setJsonFileName(String jsonFileName) throws IOException {
 		this.jsonFileName = jsonFileName;
+
+		Path path = Paths.get(this.jsonFileName);
+		String jsonString = Files.readString(path);
+		ObjectMapper mapper = new ObjectMapper();
+		jsonMap = mapper.readValue(jsonString, Map.class);
 	}
 
 }
