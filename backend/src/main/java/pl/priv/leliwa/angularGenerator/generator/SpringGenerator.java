@@ -7,10 +7,15 @@ import java.util.Map.Entry;
 public class SpringGenerator extends Generator {
 
 	protected String getOutputFileName(String outputPath, String templateName) {
-		String Item = (String) this.jsonMap.get("Item");
+		String Item = (String) jsonMap.get("Item");
 		String fileName = templateName.replace("Item", Item);
 		fileName = fileName.substring(0, fileName.length() - 3);
-		return outputPath + "/" + fileName;
+		if (jsonMap.containsKey("package")) {
+			String packagePath = (String) jsonMap.get("package");
+			packagePath = packagePath.replace(".", "/");
+			return outputPath + "/" + packagePath + "/" + jsonMap.get("item") + "/" + fileName; 
+		} else
+			return outputPath + "/" + fileName;
 	}
 	
 	protected void addDefaultValues() {

@@ -1,5 +1,6 @@
 package pl.priv.leliwa.angularGenerator.generator;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -35,6 +36,8 @@ public abstract class AbstractGenerator {
 				System.out.print("Generating " + outputFileName + " ... ");
 				
 				StringWriter sw = this.generate(t);
+				File file = new File(outputFileName);
+				file.getParentFile().mkdirs();
 		        FileWriter fw = new FileWriter(outputFileName);
 		        fw.write(sw.toString());
 		        fw.close();

@@ -1,0 +1,16 @@
+package com.vimado.hanza.product;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="product")
+public class Product {
+	@Id
+	public Integer id;
+	public String type;
+	public String symbol;
+	public String name;
+	public String description;
+}

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,15 @@ public final class Resources {
 		return filenames;
 	}
 
+	public String GetResourceFileName(String resoureName) {
+		return Resources.getInstance().getResourceFileName(resoureName);
+	}
+	
+	public String getResourceFileName(String resoureName) {
+		URL u = getClass().getResource(resoureName);
+		return u.getFile().substring(1);
+	}
+	
 	private InputStream getResourceAsStream(String resource) {
 		final InputStream in = getContextClassLoader().getResourceAsStream(resource);
 

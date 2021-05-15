@@ -1,0 +1,9 @@
+package com.vimado.hanza.product;
+
+@SuppressWarnings("serial")
+public class ProductNotFoundException extends Exception {
+
+	public ProductNotFoundException(Integer id) {
+		super("Could not find product " + id);
+	}
+}

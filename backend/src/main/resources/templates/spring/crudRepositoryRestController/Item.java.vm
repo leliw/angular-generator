@@ -1,15 +1,12 @@
 package ${package}.${item};
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="${item}")
-public class Organization {
+public class ${Item} {
 #foreach($field in $javaFields.keySet())
 #if($field == $id)
 	@Id

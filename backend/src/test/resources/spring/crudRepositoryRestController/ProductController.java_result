@@ -1,0 +1,54 @@
+package com.vimado.hanza.product;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ProductController {
+	@Autowired
+	private ProductRepository repository;
+	
+	@GetMapping("/products")
+	public @ResponseBody Iterable<Product> getAll() {
+		 return this.repository.findAll();
+	}
+	
+	@GetMapping("/products/{id}")
+	public Product one(@PathVariable Integer id) throws Exception {
+		return this.repository.findById(id)
+				.orElseThrow(() -> new ProductNotFoundException(id));
+	}
+
+	@PostMapping("/products")
+	public Product newOne(@RequestBody Product item) {
+		return this.repository.save(item);
+	}
+	
+	@PutMapping("/products/{id}")
+	public Product replace(@RequestBody Product newItem, @PathVariable Integer id)
+			throws Exception {
+		return repository.findById(id).map(item -> {
+			item.type = newItem.type;
+			item.symbol = newItem.symbol;
+			item.name = newItem.name;
+			item.description = newItem.description;
+			return repository.save(newItem);
+		}).orElseGet(() -> {
+			newItem.id = id;
+			return repository.save(newItem);
+		});
+	}
+	
+	@DeleteMapping("/products/{id}")
+	public void delete(@PathVariable Integer id) {
+		repository.deleteById(id);
+	}
+
+}
