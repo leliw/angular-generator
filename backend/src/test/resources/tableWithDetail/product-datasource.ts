@@ -2,23 +2,25 @@ import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { catchError, map } from 'rxjs/operators';
-import { Observable, merge, of, throwError } from 'rxjs';
+import { Observable, merge, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-export interface ${Item}Item {
-#foreach($field in $fields.keySet())
-  ${field}: $fields.get($field);
-#end
+export interface ProductItem {
+  id: number;
+  symbol1: string;
+  symbol2: string;
+  name: string;
+  description: string;
 }
 
 /**
- * Data source for the ${Item} view. This class should
+ * Data source for the Product view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class ${Component}DataSource extends DataSource<${item}Item> {
-  apiUrl : string = 'http://localhost:8080${apiPath}';
-  data: ${item}Item[] = [];
+export class ProductDataSource extends DataSource<ProductItem> {
+  apiUrl: string = 'http://localhost:8080/products';
+  data: ProductItem[] = [];
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
 
@@ -31,14 +33,14 @@ export class ${Component}DataSource extends DataSource<${item}Item> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<${item}Item[]> {
+  connect(): Observable<OrganizationItem[]> {
     if (this.paginator && this.sort) {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
-      return merge(of(this.data), this.paginator.page, this.sort.sortChange,
-        this.http.get<${item}Item[]>(this.apiUrl).pipe(map(data => this.data = data)))
+      return merge(this.paginator.page, this.sort.sortChange,
+        this.http.get<OrganizationItem[]>('http://localhost:8080/organizations/').pipe(map(data => this.data = data)))
         .pipe(map(() => {
-          return this.getPagedData(this.getSortedData([...this.data ]));
+          return this.getPagedData(this.getSortedData([...this.data]));
         }));
     } else {
       throw Error('Please set the paginator and sort on the data source before connecting.');
@@ -49,13 +51,13 @@ export class ${Component}DataSource extends DataSource<${item}Item> {
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
-  disconnect(): void {}
+  disconnect(): void { }
 
   /**
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: ${item}Item[]): ${item}Item[] {
+  private getPagedData(data: OrganizationItem[]): OrganizationItem[] {
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
       return data.splice(startIndex, this.paginator.pageSize);
@@ -68,7 +70,7 @@ export class ${Component}DataSource extends DataSource<${item}Item> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: ${item}Item[]): ${item}Item[] {
+  private getSortedData(data: OrganizationItem[]): OrganizationItem[] {
     if (!this.sort || !this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -76,13 +78,8 @@ export class ${Component}DataSource extends DataSource<${item}Item> {
     return data.sort((a, b) => {
       const isAsc = this.sort?.direction === 'asc';
       switch (this.sort?.active) {
-#foreach($field in $fields.keySet())
-#if($fields.get($field) == 'number')
-        case '${field}': return compare(+a.${field}, +b.${field}, isAsc);
-#else
-        case '${field}': return compare(a.${field}, b.${field}, isAsc);
-#end
-#end      
+        case 'name': return compare(a.shortName, b.shortName, isAsc);
+        case 'id': return compare(+a.id, +b.id, isAsc);
         default: return 0;
       }
     });
@@ -103,59 +100,48 @@ export class ${Component}DataSource extends DataSource<${item}Item> {
     return throwError(
       'Something bad happened; please try again later.');
   }
-  
-  public addRowData(row_obj){
-    console.log(row_obj);
-    this.http.post<${item}Item>(this.apiUrl, row_obj)
-    .pipe(
-      catchError(this.handleError)
-    )
-    .subscribe((saved) => { 
-      console.log(saved); 
-      this.data.push({
-#foreach($field in $fields.keySet())
-        ${field}: saved.${field},
-#end       
-      });
-      this.paginator.page.emit();
-    }
-    );
+
+  public getItem(id: number): Observable<OrganizationItem> {
+    return this.http.get<OrganizationItem>(this.apiUrl + '/' + id);
   }
 
-  public updateRowData(row_obj){
-    console.log(row_obj);
-    this.http.put<${item}Item>(this.apiUrl + '/' + row_obj.${id}, row_obj)
-    .pipe(
-      catchError(this.handleError)
-    )
-    .subscribe(() => { 
-      this.data = this.data.filter((value,key)=>{
-        if(value.${id} == row_obj.${id}) {
-#foreach($field in $fields.keySet())
-#if($field != $id)
-          value.${field} = row_obj.${field};
-#end
-#end
-        }
-        return true; 
-      });
-      this.paginator.page.emit();
-    }
-    );
+  public addItem(newItem) {
+    console.log(newItem);
+    return this.http.post<OrganizationItem>(this.apiUrl, newItem)
+      .pipe(
+        catchError(this.handleError),
+        map((savedItem) => this.data.push(savedItem))
+      );
   }
-    
-  public deleteRowData(row_obj) {
-    this.http.delete(this.apiUrl + '/' + row_obj.${id})
-    .pipe(
-      catchError(this.handleError)
-    )
-    .subscribe(() => {
-      this.data = this.data.filter((value,key)=>{
-        return value.${id} != row_obj.${id};
-      });
-      this.paginator.page.emit();
-    }
-    );    
+
+  public updateItem(updatedItem): Observable<void> {
+    console.log(updatedItem);
+    return this.http.put<OrganizationItem>(this.apiUrl + '/' + updatedItem.id, updatedItem)
+      .pipe(
+        catchError(this.handleError),
+        map((savedItem) => {
+          this.data = this.data.filter((value, key) => {
+            if (value.id == savedItem.id) {
+              value.symbol = savedItem.symbol;
+              value.shortName = savedItem.shortName;
+            }
+            return true;
+          })
+        }
+        )
+      );
+  }
+
+  deleteItem(deletedItem): Observable<void> {
+    return this.http.delete(this.apiUrl + '/' + deletedItem.id)
+      .pipe(
+        catchError(this.handleError),
+        map(() => {
+          this.data = this.data.filter((value, key) => {
+            return value.id != deletedItem.id;
+          })
+        })
+      );
   }
 }
 

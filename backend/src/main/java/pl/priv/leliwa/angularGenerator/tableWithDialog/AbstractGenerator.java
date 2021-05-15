@@ -52,7 +52,10 @@ public abstract class AbstractGenerator {
 	}
 
 	protected String getTemplateName() {
-		return String.format("%s/%s", templatePath, templateName);
+		if (templatePath != null)
+			return String.format("%s/%s", templatePath, templateName);
+		else
+			return templateName;
 	}
 	
 	protected List<String> getResourceFiles(String path) throws IOException {

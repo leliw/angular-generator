@@ -1,0 +1,15 @@
+{
+	"Item": "Product",
+	"component": "product",
+	"Component": "Product",
+	"apiPath": "/products",
+	"fields": {
+		"id": "number",
+		"symbol1": "string",
+		"symbol2": "string",
+		"name": "string",
+		"description": "string"
+	},
+	"id": "id",
+	"key": "symbol1"
+}
