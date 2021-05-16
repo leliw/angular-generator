@@ -1,0 +1,40 @@
+.full-width {
+    width: 100%;
+}
+
+.dialog {
+    min-width: 120px;
+    margin: 20px auto;
+}
+
+.mat-radio-button {
+    display: block;
+    margin: 5px 0;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    flex: 1;
+    margin-right: 20px;
+}
+.col-double {
+    flex: 2;
+    margin-right: 20px;
+}
+.col-triple {
+    flex: 3;
+    margin-right: 20px;
+}
+.col:last-child,
+.col-double:last-child,
+.col-triple:last-child {
+    margin-right: 0;
+}
+
+mat-card-actions {
+    text-align: center;
+}

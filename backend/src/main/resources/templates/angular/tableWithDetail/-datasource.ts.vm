@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { catchError, map } from 'rxjs/operators';
 import { Observable, merge, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 export interface ${Item}Item {
 #foreach($field in $fields.keySet())
@@ -17,7 +18,7 @@ export interface ${Item}Item {
  * (including sorting, pagination, and filtering).
  */
 export class ${Component}DataSource extends DataSource<${Item}Item> {
-  apiUrl: string = 'http://localhost:8080${apiPath}';
+  apiUrl: string = environment.apiUrl + '${apiPath}';
   data: ${Item}Item[] = [];
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
@@ -31,12 +32,12 @@ export class ${Component}DataSource extends DataSource<${Item}Item> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<OrganizationItem[]> {
+  connect(): Observable<${Item}Item[]> {
     if (this.paginator && this.sort) {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
       return merge(this.paginator.page, this.sort.sortChange,
-        this.http.get<OrganizationItem[]>('http://localhost:8080/organizations/').pipe(map(data => this.data = data)))
+        this.http.get<${Item}Item[]>(this.apiUrl).pipe(map(data => this.data = data)))
         .pipe(map(() => {
           return this.getPagedData(this.getSortedData([...this.data]));
         }));
@@ -55,7 +56,7 @@ export class ${Component}DataSource extends DataSource<${Item}Item> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: OrganizationItem[]): OrganizationItem[] {
+  private getPagedData(data: ${Item}Item[]): ${Item}Item[] {
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
       return data.splice(startIndex, this.paginator.pageSize);
@@ -68,7 +69,7 @@ export class ${Component}DataSource extends DataSource<${Item}Item> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: OrganizationItem[]): OrganizationItem[] {
+  private getSortedData(data: ${Item}Item[]): ${Item}Item[] {
     if (!this.sort || !this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -76,8 +77,13 @@ export class ${Component}DataSource extends DataSource<${Item}Item> {
     return data.sort((a, b) => {
       const isAsc = this.sort?.direction === 'asc';
       switch (this.sort?.active) {
-        case 'name': return compare(a.shortName, b.shortName, isAsc);
-        case 'id': return compare(+a.id, +b.id, isAsc);
+#foreach($field in $fields.keySet())
+#if($fields.get($field) == 'number')
+        case '${field}': return compare(+a.${field}, +b.${field}, isAsc);
+#else
+        case '${field}': return compare(a.${field}, b.${field}, isAsc);
+#end
+#end  
         default: return 0;
       }
     });
@@ -99,13 +105,13 @@ export class ${Component}DataSource extends DataSource<${Item}Item> {
       'Something bad happened; please try again later.');
   }
 
-  public getItem(id: number): Observable<OrganizationItem> {
-    return this.http.get<OrganizationItem>(this.apiUrl + '/' + id);
+  public getItem(id: number): Observable<${Item}Item> {
+    return this.http.get<${Item}Item>(this.apiUrl + '/' + id);
   }
 
   public addItem(newItem) {
     console.log(newItem);
-    return this.http.post<OrganizationItem>(this.apiUrl, newItem)
+    return this.http.post<${Item}Item>(this.apiUrl, newItem)
       .pipe(
         catchError(this.handleError),
         map((savedItem) => this.data.push(savedItem))
@@ -114,14 +120,17 @@ export class ${Component}DataSource extends DataSource<${Item}Item> {
 
   public updateItem(updatedItem): Observable<void> {
     console.log(updatedItem);
-    return this.http.put<OrganizationItem>(this.apiUrl + '/' + updatedItem.id, updatedItem)
+    return this.http.put<${Item}Item>(this.apiUrl + '/' + updatedItem.id, updatedItem)
       .pipe(
         catchError(this.handleError),
         map((savedItem) => {
           this.data = this.data.filter((value, key) => {
-            if (value.id == savedItem.id) {
-              value.symbol = savedItem.symbol;
-              value.shortName = savedItem.shortName;
+          if(value.${id} == savedItem.${id}) {
+#foreach($field in $fields.keySet())
+#if($field != $id)
+          value.${field} = savedItem.${field};
+#end
+#end
             }
             return true;
           })

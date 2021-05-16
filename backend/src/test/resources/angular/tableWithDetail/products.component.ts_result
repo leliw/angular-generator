@@ -1,28 +1,36 @@
+import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
-import { OrganizationDataSource, OrganizationItem } from './organization-datasource';
-import { HttpClient } from '@angular/common/http';
-import { DialogBoxComponent } from '../dialog-box/dialog-box.component';
+import { ProductsDetailComponent } from './products-detail.component';
+import { ProductsDataSource, ProductItem } from './products-datasource';
+import { ProductsDeleteDialogComponent } from './products-delete-dialog.component';
 
 @Component({
-  selector: 'app-organization',
-  templateUrl: './organization.component.html',
-  styleUrls: ['./organization.component.css']
+  selector: 'app-products',
+  templateUrl: './products.component.html',
+  styleUrls: ['./products.component.css']
 })
-export class OrganizationComponent implements AfterViewInit {
+export class ProductsComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<OrganizationItem>;
-  dataSource: OrganizationDataSource;
+  @ViewChild(MatTable) table!: MatTable<ProductItem>;
+  dataSource: ProductsDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'symbol', 'nip', 'shortName', 'postalCode', 'city', 'actions'];
+  displayedColumns = [
+    'id', 
+    'type', 
+    'symbol', 
+    'name', 
+    'description', 
+    'actions'
+  ];
 
-  constructor(private http: HttpClient, public dialog: MatDialog ) {
-    this.dataSource = new OrganizationDataSource(http);
+  constructor(private http: HttpClient, public dialog: MatDialog) {
+    this.dataSource = new ProductsDataSource(http);
   }
 
   ngAfterViewInit(): void {
@@ -30,10 +38,10 @@ export class OrganizationComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.table.dataSource = this.dataSource;
   }
-
+  
   openDialog(action: string, obj) {
     obj.action = action;
-    const dialogRef = this.dialog.open(DialogBoxComponent, {
+    const dialogRef = this.dialog.open(ProductsDeleteDialogComponent, {
       data:obj
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -43,5 +51,5 @@ export class OrganizationComponent implements AfterViewInit {
           () => this.dataSource.paginator.page.emit()
         )
     });
-  }
+  }  
 }

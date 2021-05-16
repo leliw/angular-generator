@@ -1,0 +1,53 @@
+import { HttpClient } from '@angular/common/http';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTable } from '@angular/material/table';
+import { ${Component}DetailComponent } from './${component}-detail.component';
+import { ${Component}DataSource, ${Item}Item } from './${component}-datasource';
+import { ${Component}DeleteDialogComponent } from './${component}-delete-dialog.component';
+
+@Component({
+  selector: 'app-${component}',
+  templateUrl: './${component}.component.html',
+  styleUrls: ['./${component}.component.css']
+})
+export class ${Component}Component implements AfterViewInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatTable) table!: MatTable<${Item}Item>;
+  dataSource: ${Component}DataSource;
+
+  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
+  displayedColumns = [
+#foreach($field in $fields.keySet()) 
+    '${field}', 
+#end
+    'actions'
+  ];
+
+  constructor(private http: HttpClient, public dialog: MatDialog) {
+    this.dataSource = new ${Component}DataSource(http);
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.table.dataSource = this.dataSource;
+  }
+  
+  openDialog(action: string, obj) {
+    obj.action = action;
+    const dialogRef = this.dialog.open(${Component}DeleteDialogComponent, {
+      data:obj
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result.event == "Delete")
+        this.dataSource.deleteItem(result.data).subscribe(
+          () => this.dataSource.paginator.page.emit()
+        )
+    });
+  }  
+}

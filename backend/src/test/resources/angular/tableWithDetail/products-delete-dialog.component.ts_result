@@ -1,0 +1,33 @@
+import { Component, Inject, Optional } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ProductItem } from '../products/products-datasource';
+
+
+@Component({
+  selector: 'app-products-delete-dialog',
+  templateUrl: './products-delete-dialog.component.html',
+  styleUrls: ['./products-delete-dialog.component.css']
+})
+export class ProductsDeleteDialogComponent {
+
+  action:string;
+  local_data:any;
+
+  constructor(
+    public dialogRef: MatDialogRef<ProductsDeleteDialogComponent>,
+    //@Optional() is used to prevent error if no data is passed
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: ProductItem) {
+    console.log(data);
+    this.local_data = {...data};
+    this.action = this.local_data.action;
+  }
+
+  doAction(){
+    this.dialogRef.close({event:this.action,data:this.local_data});
+  }
+
+  closeDialog(){
+    this.dialogRef.close({event:'Cancel'});
+  }
+
+}

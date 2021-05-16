@@ -3,8 +3,8 @@ package pl.priv.leliwa.angularGenerator.generator;
 public class AngularGenerator extends Generator {
 
 	protected String getOutputFileName(String outputPath, String templateName) {
-		String componentName = (String) this.jsonMap.get("Component");
-		return outputPath + "/" + componentName + (templateName.startsWith("-") ? "" :  ".") + templateName.substring(0, templateName.length() - 3);
+		String componentName = (String) this.jsonMap.get("component");
+		return outputPath + "/" + componentName + "/" + componentName + (templateName.startsWith("-") ? "" :  ".") + templateName.substring(0, templateName.length() - 3);
 	}
 	
 	protected void addDefaultValues() {

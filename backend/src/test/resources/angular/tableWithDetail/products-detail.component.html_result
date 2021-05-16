@@ -1,0 +1,65 @@
+<form [formGroup]="detailForm" novalidate (ngSubmit)="onSubmit()">
+    <mat-card class="shipping-card">
+        <mat-card-header>
+            <mat-card-title>Product</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="id" formControlName="id">
+                        <mat-error *ngIf="detailForm.controls['id'].hasError('required')">
+                            id is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="type" formControlName="type">
+                        <mat-error *ngIf="detailForm.controls['type'].hasError('required')">
+                            type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="symbol" formControlName="symbol">
+                        <mat-error *ngIf="detailForm.controls['symbol'].hasError('required')">
+                            symbol is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="name" formControlName="name">
+                        <mat-error *ngIf="detailForm.controls['name'].hasError('required')">
+                            name is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="description" formControlName="description">
+                        <mat-error *ngIf="detailForm.controls['description'].hasError('required')">
+                            description is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+            <button mat-raised-button color="primary" type="submit">Submit</button>
+            <button mat-raised-button color="warn" type="button" (click)="goBack()">Cancel</button>
+        </mat-card-actions>
+    </mat-card>
+</form>

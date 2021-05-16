@@ -1,0 +1,27 @@
+<form [formGroup]="detailForm" novalidate (ngSubmit)="onSubmit()">
+    <mat-card class="shipping-card">
+        <mat-card-header>
+            <mat-card-title>${Item}</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+#foreach($field in $fields.keySet())    
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="${field}" formControlName="${field}">
+                        <mat-error *ngIf="detailForm.controls['${field}'].hasError('required')">
+                            ${field} is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+#end          
+        </mat-card-content>
+
+        <mat-card-actions>
+            <button mat-raised-button color="primary" type="submit">Submit</button>
+            <button mat-raised-button color="warn" type="button" (click)="goBack()">Cancel</button>
+        </mat-card-actions>
+    </mat-card>
+</form>

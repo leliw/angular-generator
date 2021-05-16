@@ -1,0 +1,12 @@
+.full-width {
+    width: 100%;
+}
+
+.dialog {
+    min-width: 120px;
+    margin: 20px auto;
+}
+
+.mat-dialog-actions {
+    justify-content: flex-end;
+}

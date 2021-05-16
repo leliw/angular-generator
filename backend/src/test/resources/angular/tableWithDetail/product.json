@@ -1,15 +1,17 @@
 {
 	"Item": "Product",
-	"component": "product",
-	"Component": "Product",
+	"component": "products",
+	"Component": "Products",
 	"apiPath": "/products",
+	"package": "com.vimado.hanza",
+	"id": "id",
+	"IdClass": "Integer",
+	"key": "symbol",
 	"fields": {
 		"id": "number",
-		"symbol1": "string",
-		"symbol2": "string",
+		"type": "string",
+		"symbol": "string",
 		"name": "string",
 		"description": "string"
-	},
-	"id": "id",
-	"key": "symbol1"
+	}
 }
